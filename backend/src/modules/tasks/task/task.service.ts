@@ -34,7 +34,8 @@ export class TaskService {
       created_by: managerId,
       assigned_tl: null,
 
-      status_id: createTaskDto.status_id ?? 1,
+      // status_id: createTaskDto.status_id ?? 1,
+      status_id: createTaskDto.status_id ?? null,
       due_date: createTaskDto.due_date
         ? new Date(createTaskDto.due_date)
         : null,
@@ -50,7 +51,8 @@ export class TaskService {
     return this.taskModel.findAll({
       where: {
         created_by: managerId,
-        status_id: 1,
+        // status_id: 1,
+        status_id: null
       },
     });
   }
@@ -59,13 +61,16 @@ export class TaskService {
     const [updatedRows] = await this.taskModel.update(
       {
         assigned_tl: tlId,
-        status_id: 2,
+        // status_id: 2,
+        status_id: 1,
       },
       {
         where: {
           created_by: managerId,
-          status_id: 1,
-          assigned_tl: null,
+          // status_id: 1,
+          // assigned_tl: null,
+          status_id: { [Op.is]: null },
+          assigned_tl: { [Op.is]: null },
         },
       },
     );
@@ -111,7 +116,7 @@ export class TaskService {
     if (!task) {
       throw new NotFoundException('Task not found');
     }
-    console.log("Assigned task to Users",task?.assigned_tl, tlId);
+    // console.log('Assigned task to Users', task?.assigned_tl, tlId);
     if (task.assigned_tl !== tlId) {
       throw new ForbiddenException(
         'You are not authorized to assign users to this task',

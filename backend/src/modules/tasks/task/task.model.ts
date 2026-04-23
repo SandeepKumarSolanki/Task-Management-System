@@ -65,8 +65,11 @@ export class Task extends Model<Task> {
   declare teamLeader: User;
 
   @ForeignKey(() => TaskStatus)
-  @Column({ type: DataType.INTEGER, })
-  declare status_id: number;
+  @Column({ 
+    type: DataType.INTEGER, 
+    allowNull: true,
+  })
+  declare status_id: number | null;
 
   @BelongsTo(() => TaskStatus)
   declare status: TaskStatus;

@@ -9,6 +9,7 @@ import { UnauthorizedException, ConflictException } from '@nestjs/common';
 import { TaskStatus } from 'src/modules/tasks/task-status/task-status.model';
 import { TaskAssignment } from 'src/modules/tasks/task_assignments.model';
 import { Task } from 'src/modules/tasks/task/task.model';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class UsersService {
@@ -151,12 +152,45 @@ export class UsersService {
       throw new ForbiddenException('Task not found');
     }
 
-    task.status_id = 4; 
+    // task.status_id = 4; 
+    task.status_id = 3;
     await task.save();
 
     return {
       message: 'Task marked as completed',
     };
   }
+
+  async getAllTaskInfoDetail() {
+      // total tasks
+      const totalTasks = await this.taskModel.count();
+  
+      // status wise count
+      const statusCounts = await this.taskModel.findAll({
+        attributes: [
+          'status_id',
+          [Sequelize.fn('COUNT', Sequelize.col('status_id')), 'count'],
+        ],
+        group: ['status_id'],
+        raw: true,
+      });
+  
+      // convert array → object
+      const statusMap: any = {};
+  
+      statusCounts.forEach((item: any) => {
+        statusMap[item.status_id] = Number(item.count);
+      });
+  
+      return {
+        totalTasks,
+  
+        pending: statusMap[1] || 0,
+        inProgress: statusMap[2] || 0,
+        inReview: statusMap[3] || 0,
+        completed: statusMap[4] || 0,
+        rejected: statusMap[5] || 0,
+      };
+    }
 
 }

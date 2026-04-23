@@ -7,3 +7,18 @@ export interface ApiResponse<T> {
   data?: T;
   errors?: any;
 }
+
+export function successResponse<T>(
+  message: string,
+  items: T,
+  status = 200,
+) {
+  return {
+    success: true,
+    message,
+    status,
+    data: {
+      items,
+    },
+  };
+}

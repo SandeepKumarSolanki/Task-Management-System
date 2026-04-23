@@ -37,7 +37,10 @@ export class HttpExceptionFilter implements ExceptionFilter {
     response.status(status).json({
       success: false,
       statusCode: status,
-      message,
+      message:
+        status === 404
+          ? 'The API endpoint you are trying to access does not exist.'
+          : message,
       // path: request.url,
     //   timestamp: new Date().toISOString(),
     });

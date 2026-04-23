@@ -7,7 +7,7 @@ import {
   DefaultValuePipe,
   Param,
   Post,
-  UseGuards,
+  UseGuards
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AdminLoginDto } from './dto/admin-login.dto';
@@ -25,6 +25,13 @@ export class AuthController {
     return this.authService.adminLogin(adminLoginDto);
   }
 
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @Get('dashboard')
+  async getAllTaskInfo() {
+    console.log("Dashboard Detail Api Hit")
+    return this.authService.getAllTaskInfoDetail();
+  }
+
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Post('assign-role/:id')
   async assignRole(
@@ -36,13 +43,13 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
-  getUsers() {
+  async getUsers() {
     return this.authService.getUsers();
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get(':id')
-  getUserById(@Param('id') id: number) {
+  async getUserById(@Param('id') id: number) {
     return this.authService.getUserById(id);
   }
 
@@ -53,7 +60,10 @@ export class AuthController {
 
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Delete(':id')
-  deleteUser(@Param('id') id: number) {
+  async deleteUser(@Param('id') id: number) {
     return this.authService.deleteUser(id);
   }
+
+  
+
 }

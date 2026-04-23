@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
-import { Op } from 'sequelize';
+import { Op, Sequelize } from 'sequelize';
 import { User } from '../employees/users/users.model';
 import { Role } from '../organization/roles/roles.model';
 import { Department } from '../organization/departments/departments.model';
@@ -14,18 +14,26 @@ import { Designation } from '../organization/designations/designations.model';
 import { JwtService } from '@nestjs/jwt';
 import { AdminLoginDto } from './dto/admin-login.dto';
 import { AssignUserDto } from './dto/assign-user.dto';
+import { Task } from '../tasks/task/task.model';
+import { successResponse } from 'src/common/interfaces/api-response.interface';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User)
     private userModel: typeof User,
+
     @InjectModel(Role)
     private roleModel: typeof Role,
+
     @InjectModel(Department)
     private departmentModel: typeof Department,
+
     @InjectModel(Designation)
     private designationModel: typeof Designation,
+
+    @InjectModel(Task)
+    private taskModel: typeof Task,
     private jwtService: JwtService,
     private configService: ConfigService,
   ) {}
@@ -183,5 +191,37 @@ export class AuthService {
     return {
       message: 'User deleted successfully',
     };
+  }
+
+  async getAllTaskInfoDetail() {
+    // total tasks
+    console.log("Dashboard")
+    const totalTasks = await this.taskModel.count();
+
+    // status wise count
+    const statusCounts = await this.taskModel.findAll({
+      attributes: [
+        'status_id',
+        [Sequelize.fn('COUNT', Sequelize.col('status_id')), 'count'],
+      ],
+      group: ['status_id'],
+      raw: true,
+    });
+
+    // convert array → object
+    const statusMap: any = {};
+
+    statusCounts.forEach((item: any) => {
+      statusMap[item.status_id] = Number(item.count);
+    });
+
+    return successResponse("Task Info Page",  {
+      totalTasks,
+      pending: statusMap[1] || 0,
+      inProgress: statusMap[2] || 0,
+      inReview: statusMap[3] || 0,
+      completed: statusMap[4] || 0,
+      rejected: statusMap[5] || 0,
+    })
   }
 }

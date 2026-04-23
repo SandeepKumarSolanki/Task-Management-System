@@ -40,4 +40,10 @@ export class UsersController {
   ) {
     return this.usersService.markTaskCompleted(userId, taskId);
   }
+
+  @Get('dashboard')
+  async getAllInfo() {
+    return this.usersService.getAllTaskInfoDetail();
+  }
+
 }
