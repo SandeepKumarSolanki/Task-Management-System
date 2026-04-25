@@ -5,6 +5,7 @@ import {
   HttpException,
   HttpStatus,
 } from '@nestjs/common';
+import { ThrottlerException } from '@nestjs/throttler';
 
 import { Request, Response } from 'express';
 
@@ -34,9 +35,15 @@ export class HttpExceptionFilter implements ExceptionFilter {
       console.error(exception);
     }
 
+    //Throttler Error(CUSTOM MESSAGE)
+    if (exception instanceof ThrottlerException) {
+      status = HttpStatus.TOO_MANY_REQUESTS;
+      message = 'Too many requests. Please wait a moment and try again.';
+    }
+
     response.status(status).json({
       success: false,
-      statusCode: status,
+      status: status,
       message:
         status === 404
           ? 'The API endpoint you are trying to access does not exist.'

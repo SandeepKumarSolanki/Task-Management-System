@@ -11,6 +11,9 @@ import { ConfigService } from '@nestjs/config';
 import { TaskModule } from 'src/modules/tasks/task/task.module';
 import { Task } from 'src/modules/tasks/task/task.model';
 import { TaskAssignment } from 'src/modules/tasks/task_assignments.model';
+import { Device } from 'src/models/devices.model';
+import { Session } from 'src/models/sessions.model';
+import { UserLogHistory } from 'src/models/user-log-history.model';
 
 @Module({
   imports: [
@@ -21,7 +24,10 @@ import { TaskAssignment } from 'src/modules/tasks/task_assignments.model';
         Role, 
         Designation, 
         Task, 
-        TaskAssignment
+        TaskAssignment,
+        Device,
+        Session,
+        UserLogHistory
       ]
     ),
     JwtModule.registerAsync({

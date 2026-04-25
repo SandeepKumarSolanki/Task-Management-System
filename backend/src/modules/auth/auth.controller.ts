@@ -25,7 +25,7 @@ export class AuthController {
     return this.authService.adminLogin(adminLoginDto);
   }
 
-  // @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('dashboard')
   async getAllTaskInfo() {
     console.log("Dashboard Detail Api Hit")
@@ -63,7 +63,5 @@ export class AuthController {
   async deleteUser(@Param('id') id: number) {
     return this.authService.deleteUser(id);
   }
-
-  
-
+ 
 }
