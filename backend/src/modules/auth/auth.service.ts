@@ -16,6 +16,9 @@ import { AdminLoginDto } from './dto/admin-login.dto';
 import { AssignUserDto } from './dto/assign-user.dto';
 import { Task } from '../tasks/task/task.model';
 import { successResponse } from 'src/common/interfaces/api-response.interface';
+import { EmployeeHistory } from '../employees/employee-history/employee-history.model';
+import { EmployeeHistoryModule } from '../employees/employee-history/employee-history.module';
+import { EmployeeHistoryService } from '../employees/employee-history/employee-history.service';
 
 @Injectable()
 export class AuthService {
@@ -31,6 +34,8 @@ export class AuthService {
 
     @InjectModel(Designation)
     private designationModel: typeof Designation,
+
+    private employeeHistoryService: EmployeeHistoryService,
 
     @InjectModel(Task)
     private taskModel: typeof Task,
@@ -151,12 +156,24 @@ export class AuthService {
       is_active: dto.is_active ?? true, // Default to active if not specified
     });
 
+    let userHistory = await this.employeeHistoryService.createHistory({
+      user_id: user.id,
+      role_id: dto.role_id ?? null,
+      department_id: dto.department_id ?? null,
+      designation_id: dto.designation_id ?? null,
+      reason: 'Role Assigned by Admin',
+    });
+
+    // console.log("User History Table: ", userHistory)
     const { password, ...updatedUser } = user.toJSON();
 
-    return {
-      message: 'User assigned successfully',
-      user: updatedUser,
-    };
+    return successResponse('User assigned successfully', {
+        data: updatedUser
+    })
+    // return {
+    //   message: 'User assigned successfully',
+    //   user: updatedUser,
+    // };
   }
 
   async getUsers() {
@@ -195,7 +212,7 @@ export class AuthService {
 
   async getAllTaskInfoDetail() {
     // total tasks
-    console.log("Dashboard")
+    console.log('Dashboard');
     const totalTasks = await this.taskModel.count();
 
     // status wise count
@@ -215,13 +232,13 @@ export class AuthService {
       statusMap[item.status_id] = Number(item.count);
     });
 
-    return successResponse("Task Info Page",  {
+    return successResponse('Task Info Page', {
       totalTasks,
       pending: statusMap[1] || 0,
       inProgress: statusMap[2] || 0,
       inReview: statusMap[3] || 0,
       completed: statusMap[4] || 0,
       rejected: statusMap[5] || 0,
-    })
+    });
   }
 }

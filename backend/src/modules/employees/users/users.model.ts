@@ -11,6 +11,7 @@ import {
 import { Department } from 'src/modules/organization/departments/departments.model';
 import { Role } from 'src/modules/organization/roles/roles.model';
 import { Designation } from 'src/modules/organization/designations/designations.model';
+import { EmployeeHistory } from '../employee-history/employee-history.model';
 
 
 @Table({
@@ -86,6 +87,6 @@ export class User extends Model<User> {
   })
   declare is_active: boolean;
 
-//   @HasMany(() => EmployeeHistory)
-//   declare histories: EmployeeHistory[];
+  @HasMany(() => EmployeeHistory)
+  declare histories: EmployeeHistory[];
 }

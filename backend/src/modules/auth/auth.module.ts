@@ -10,11 +10,13 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from 'src/common/strategies/jwt.strategy';
 import { ConfigService } from '@nestjs/config/dist/config.service';
 import { Task } from '../tasks/task/task.model';
+import { EmployeeHistoryModule } from '../employees/employee-history/employee-history.module';
 
 
 @Module({
   imports: [
     SequelizeModule.forFeature([User, Role, Department, Designation,Task]),
+    EmployeeHistoryModule,
     JwtModule.registerAsync({
   inject: [ConfigService],
    useFactory: (config: ConfigService) => ({

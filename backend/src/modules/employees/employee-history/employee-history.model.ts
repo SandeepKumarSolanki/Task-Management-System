@@ -5,13 +5,14 @@ import {
   DataType,
   ForeignKey,
   BelongsTo,
+  AllowNull,
 } from 'sequelize-typescript';
 
 import { User } from '../users/users.model';
 import { Department } from 'src/modules/organization/departments/departments.model';
 import { Role } from 'src/modules/organization/roles/roles.model';
 import { Designation } from 'src/modules/organization/designations/designations.model';
-
+import { allow } from 'joi';
 
 @Table({
   tableName: 'employee_histories',
@@ -22,7 +23,6 @@ import { Designation } from 'src/modules/organization/designations/designations.
   deletedAt: 'deleted_at',
 })
 export class EmployeeHistory extends Model<EmployeeHistory> {
-
   /* ======================
      PRIMARY KEY
   ====================== */
@@ -53,8 +53,11 @@ export class EmployeeHistory extends Model<EmployeeHistory> {
   ====================== */
 
   @ForeignKey(() => Department)
-  @Column(DataType.INTEGER)
-  declare department_id: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  declare department_id: number | null;
 
   @BelongsTo(() => Department)
   declare department: Department;
@@ -66,9 +69,10 @@ export class EmployeeHistory extends Model<EmployeeHistory> {
   @ForeignKey(() => Role)
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    // allowNull: false,
+    allowNull: true,
   })
-  declare role_id: number;
+  declare role_id: number | null;
 
   @BelongsTo(() => Role)
   declare role: Role;
@@ -78,8 +82,11 @@ export class EmployeeHistory extends Model<EmployeeHistory> {
   ====================== */
 
   @ForeignKey(() => Designation)
-  @Column(DataType.INTEGER)
-  declare designation_id: number;
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  declare designation_id: number | null;
 
   @BelongsTo(() => Designation)
   declare designation: Designation;
@@ -98,7 +105,7 @@ export class EmployeeHistory extends Model<EmployeeHistory> {
     type: DataType.DATE,
     allowNull: true,
   })
-  declare end_date: Date;
+  declare end_date: Date | null;
 
   @Column({
     type: DataType.STRING,

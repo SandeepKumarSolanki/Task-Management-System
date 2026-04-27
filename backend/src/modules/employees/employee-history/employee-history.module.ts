@@ -5,16 +5,20 @@ import { Department } from 'src/modules/organization/departments/departments.mod
 import { Role } from 'src/modules/organization/roles/roles.model';
 import { Designation } from 'src/modules/organization/designations/designations.model';
 import { SequelizeModule } from '@nestjs/sequelize';
+import { EmployeeHistoryService } from './employee-history.service';
 
 @Module({
+ 
   imports: [
     SequelizeModule.forFeature([
       EmployeeHistory,
       User,
       Department,
       Role,
-      Designation
+      Designation,
     ])
-  ]
+  ],
+  providers: [EmployeeHistoryService],
+  exports: [EmployeeHistoryService]
 })
 export class EmployeeHistoryModule {}

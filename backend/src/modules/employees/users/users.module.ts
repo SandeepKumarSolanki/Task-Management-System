@@ -14,6 +14,8 @@ import { TaskAssignment } from 'src/modules/tasks/task_assignments.model';
 import { Device } from 'src/models/devices.model';
 import { Session } from 'src/models/sessions.model';
 import { UserLogHistory } from 'src/models/user-log-history.model';
+import { EmployeeHistory } from '../employee-history/employee-history.model';
+import { EmployeeHistoryModule } from '../employee-history/employee-history.module';
 
 @Module({
   imports: [
@@ -27,9 +29,11 @@ import { UserLogHistory } from 'src/models/user-log-history.model';
         TaskAssignment,
         Device,
         Session,
-        UserLogHistory
+        UserLogHistory,
+        EmployeeHistory,
       ]
     ),
+    EmployeeHistoryModule,
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({

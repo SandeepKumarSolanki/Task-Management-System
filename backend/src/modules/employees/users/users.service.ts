@@ -18,6 +18,9 @@ import { parseDevice } from 'src/common/utils/device.util';
 import { Request } from 'express';
 import { v4 as uuid } from 'uuid';
 import { getClientIp } from 'src/common/utils/ip.util';
+import { EmployeeHistory } from '../employee-history/employee-history.model';
+import { EmployeeHistoryService } from '../employee-history/employee-history.service';
+import { successResponse } from 'src/common/interfaces/api-response.interface';
 
 
 
@@ -26,6 +29,11 @@ export class UsersService {
   constructor(
     @InjectModel(User)
     private userModel: typeof User,
+
+    @InjectModel(EmployeeHistory)
+    private employeeHistoryModel: typeof EmployeeHistory,
+
+    private employeeHistoryService: EmployeeHistoryService,
 
     @InjectModel(Task)
     private taskModel: typeof Task,
@@ -64,6 +72,14 @@ export class UsersService {
       designation_id: null,
     } as any);
 
+    await this.employeeHistoryService.createHistory({
+      user_id: newUser.id,
+      role_id: null,
+      department_id: null,
+      designation_id: null,
+      reason: 'User Registered',
+    });
+
     const { password, ...user } = newUser.toJSON();
 
     const payload = {
@@ -78,11 +94,15 @@ export class UsersService {
 
     const accessToken = this.jwtService.sign(payload);
 
-    return {
-      message: 'User signup successfully',
+    return successResponse('User Signup Successfully', {
       accessToken,
-      user,
-    };
+      data: user
+    })
+    // return {
+    //   message: 'User signup successfully',
+    //   accessToken,
+    //   user,
+    // };
   }
 
   async login(dto: LoginDto, req: Request, deviceId: string) {
@@ -195,15 +215,17 @@ export class UsersService {
       description: 'User logged in successfully',
     });
 
-    // ======================
-    // 9. RESPONSE
-    // ======================
-    return {
-      message: 'User Login Successfully',
+    return successResponse('User login successfully', {
       accessToken,
       refreshToken,
-      user: userWithoutPassword,
-    };
+      data: userWithoutPassword
+    })
+    // return {
+    //   message: 'User Login Successfully',
+    //   accessToken,
+    //   refreshToken,
+    //   user: userWithoutPassword,
+    // };
   }
 
   // async login(dto: LoginDto) {
